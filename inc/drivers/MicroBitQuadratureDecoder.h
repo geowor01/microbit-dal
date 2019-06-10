@@ -42,13 +42,13 @@ DEALINGS IN THE SOFTWARE.
 class MicroBitQuadratureDecoder : public MicroBitComponent
 {
     protected:
-    int64_t         position = 0;       // Absolute position
+    int64_t         position;           // Absolute position
     MicroBitPin&    phaseA,             // Phase A input for decoding
                     phaseB;             // Phase B input for decoding
     MicroBitPin*    LED;                // LED output to assert while decoding
-    uint32_t        samplePeriod = 128; // Minimum sampling period allowed
-    uint16_t        faults = 0;         // Double-transition counter
-    uint8_t         LEDDelay = 0;       // power-up time for LED, in microseconds
+    uint32_t        samplePeriod;       // Minimum sampling period allowed
+    uint16_t        faults;             // Double-transition counter
+    uint8_t         LEDDelay;           // power-up time for LED, in microseconds
     uint8_t         flags;
 
     public:
@@ -172,9 +172,9 @@ class MicroBitQuadratureDecoder : public MicroBitComponent
       *
       * Ensures that stop() gets called if necessary.
       */
-    virtual ~MicroBitQuadratureDecoder() override;
+    virtual ~MicroBitQuadratureDecoder();
 
-    virtual void systemTick() override;
+    virtual void systemTick();
 };
 
 #endif

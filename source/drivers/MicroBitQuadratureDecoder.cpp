@@ -46,11 +46,18 @@ DEALINGS IN THE SOFTWARE.
 MicroBitQuadratureDecoder::MicroBitQuadratureDecoder(MicroBitPin& phaseA_, MicroBitPin& phaseB_, MicroBitPin& LED_, uint8_t LEDDelay_, uint8_t flags_)
     : phaseA(phaseA_), phaseB(phaseB_), LED(&LED_), LEDDelay(LEDDelay_), flags(flags_)
 {
+    position = 0;
+    samplePeriod = 128;
+    faults = 0;
 }
 
 MicroBitQuadratureDecoder::MicroBitQuadratureDecoder(MicroBitPin& phaseA_, MicroBitPin& phaseB_, uint8_t flags_)
     : phaseA(phaseA_), phaseB(phaseB_), LED(NULL), flags(flags_)
 {
+    position = 0;
+    samplePeriod = 128;
+    faults = 0;
+    LEDDelay = 0;
 }
 
 /**
@@ -205,7 +212,7 @@ void MicroBitQuadratureDecoder::poll()
 {
     NRF_QDEC->TASKS_READCLRACC = 1;
     position += (int32_t)NRF_QDEC->ACCREAD;
-    faults = min(UINT16_MAX, faults + NRF_QDEC->ACCDBLREAD);
+    faults = min(0xFFFF, faults + NRF_QDEC->ACCDBLREAD);
 }
 
 /**

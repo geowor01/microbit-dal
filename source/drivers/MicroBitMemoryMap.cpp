@@ -43,6 +43,7 @@ DEALINGS IN THE SOFTWARE.
   */
 MicroBitMemoryMap::MicroBitMemoryMap()
 {
+      regionCount = 0;
       // Assumes PXT Built program
       // SD
       pushRegion(Region(0x00, 0x00, 0x18000, 0x00));  // Soft Device

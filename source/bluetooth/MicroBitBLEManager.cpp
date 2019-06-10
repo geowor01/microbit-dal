@@ -226,6 +226,7 @@ static void securitySetupCompletedCallback(Gap::Handle_t handle, SecurityManager
  */
 MicroBitBLEManager::MicroBitBLEManager(MicroBitStorage &_storage) : storage(&_storage)
 {
+    currentMode = MICROBIT_MODE_APPLICATION;
     manager = this;
     this->ble = NULL;
     this->pairingStatus = 0;
@@ -242,6 +243,7 @@ MicroBitBLEManager::MicroBitBLEManager(MicroBitStorage &_storage) : storage(&_st
  */
 MicroBitBLEManager::MicroBitBLEManager() : storage(NULL)
 {
+    currentMode = MICROBIT_MODE_APPLICATION;
     manager = this;
     this->ble = NULL;
     this->pairingStatus = 0;
@@ -271,7 +273,7 @@ void MicroBitBLEManager::advertise()
 }
 
 /**
- * A member function used to defer writes to flash, in order to prevent a write collision with 
+ * A member function used to defer writes to flash, in order to prevent a write collision with
  * softdevice.
  * @param handle The handle offered by soft device during pairing.
  * */
@@ -643,7 +645,7 @@ void MicroBitBLEManager::pairingMode(MicroBitDisplay &display, MicroBitButton &a
 {
     // Do not page this fiber!
     currentFiber->flags |= MICROBIT_FIBER_FLAG_DO_NOT_PAGE;
-        
+
     ManagedString namePrefix("BBC micro:bit [");
     ManagedString namePostfix("]");
     ManagedString BLEName = namePrefix + deviceName + namePostfix;
