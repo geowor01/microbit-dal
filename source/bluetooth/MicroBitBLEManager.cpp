@@ -226,6 +226,7 @@ static void securitySetupCompletedCallback(Gap::Handle_t handle, SecurityManager
  */
 MicroBitBLEManager::MicroBitBLEManager(MicroBitStorage &_storage) : storage(&_storage)
 {
+    currentMode = MICROBIT_MODE_APPLICATION;
     manager = this;
     this->ble = NULL;
     this->pairingStatus = 0;
@@ -242,6 +243,7 @@ MicroBitBLEManager::MicroBitBLEManager(MicroBitStorage &_storage) : storage(&_st
  */
 MicroBitBLEManager::MicroBitBLEManager() : storage(NULL)
 {
+    currentMode = MICROBIT_MODE_APPLICATION;
     manager = this;
     this->ble = NULL;
     this->pairingStatus = 0;
