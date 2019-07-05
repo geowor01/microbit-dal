@@ -30,6 +30,10 @@ DEALINGS IN THE SOFTWARE.
 #include "ErrorNo.h"
 #include "MicroBitQuadratureDecoder.h"
 
+#ifndef UINT16_MAX
+#define UINT16_MAX 0xFFFF
+#endif
+
 /**
   * Constructor.
   * Create a software abstraction of the quadrature decoder.
