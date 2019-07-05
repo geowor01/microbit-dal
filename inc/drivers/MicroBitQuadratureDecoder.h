@@ -172,9 +172,9 @@ class MicroBitQuadratureDecoder : public MicroBitComponent
       *
       * Ensures that stop() gets called if necessary.
       */
-    virtual ~MicroBitQuadratureDecoder() override;
+    virtual ~MicroBitQuadratureDecoder();
 
-    virtual void systemTick() override;
+    virtual void systemTick();
 };
 
 #endif
