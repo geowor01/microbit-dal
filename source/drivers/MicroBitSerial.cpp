@@ -585,16 +585,18 @@ int MicroBitSerial::read(MicroBitSerialMode mode)
   */
 ManagedString MicroBitSerial::read(int size, MicroBitSerialMode mode)
 {
-    uint8_t buff[size + 1];
+    uint8_t *buff = new uint8_t[size + 1];
 
-    memclr(&buff, size + 1);
+    memclr(buff, size + 1);
 
     int returnedSize = read((uint8_t *)buff, size, mode);
 
     if(returnedSize <= 0)
         return ManagedString();
 
-    return ManagedString((char *)buff, returnedSize);
+    ManagedString string((char *)buff, returnedSize);
+    delete[] buff;
+    return string;
 }
 
 /**
@@ -778,9 +780,9 @@ ManagedString MicroBitSerial::readUntil(ManagedString delimeters, MicroBitSerial
         //calculate our local buffer size
         int localBuffSize = (preservedTail > foundIndex) ? (rxBuffSize - preservedTail) + foundIndex : foundIndex - preservedTail;
 
-        uint8_t localBuff[localBuffSize + 1];
+        uint8_t *localBuff = new uint8_t[localBuffSize + 1];
 
-        memclr(&localBuff, localBuffSize + 1);
+        memclr(localBuff, localBuffSize + 1);
 
         circularCopy(rxBuff, rxBuffSize, localBuff, preservedTail, foundIndex);
 
@@ -789,7 +791,9 @@ ManagedString MicroBitSerial::readUntil(ManagedString delimeters, MicroBitSerial
 
         unlockRx();
 
-        return ManagedString((char *)localBuff, localBuffSize);
+        ManagedString string((char *)localBuff, localBuffSize);
+        delete[] localBuff;
+        return string;
     }
 
     unlockRx();

@@ -160,7 +160,7 @@ int MicroBitFile::read(char *buffer, int size)
   */
 ManagedString MicroBitFile::read(int size)
 {
-    char buff[size + 1];
+    char *buff = new char[size + 1];
 
     buff[size] = 0;
 
@@ -169,7 +169,9 @@ ManagedString MicroBitFile::read(int size)
     if(ret < 0)
         return ManagedString();
 
-    return ManagedString(buff,ret);
+    ManagedString string(buff,ret);
+    delete[] buff;
+    return string;
 }
 
 /**

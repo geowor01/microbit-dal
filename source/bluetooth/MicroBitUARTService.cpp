@@ -279,9 +279,9 @@ int MicroBitUARTService::send(const uint8_t *buf, int length, MicroBitSerialMode
 
         int size = txBufferedSize();
 
-        uint8_t temp[size];
+        uint8_t *temp = new uint8_t[size];
 
-        memclr(&temp, size);
+        memclr(temp, size);
 
         circularCopy(txBuffer, txBufferSize, temp, txBufferTail, txBufferHead);
 
@@ -297,6 +297,8 @@ int MicroBitUARTService::send(const uint8_t *buf, int length, MicroBitSerialMode
             break;
 
         ble.gattServer().areUpdatesEnabled(*txCharacteristic, &updatesEnabled);
+
+        delete[] temp;
     }
 
     return bytesWritten;
@@ -398,16 +400,18 @@ int MicroBitUARTService::read(uint8_t *buf, int len, MicroBitSerialMode mode)
   */
 ManagedString MicroBitUARTService::read(int len, MicroBitSerialMode mode)
 {
-    uint8_t buf[len + 1];
+    uint8_t *buf = new uint8_t[len + 1];
 
-    memclr(&buf, len + 1);
+    memclr(buf, len + 1);
 
     int ret = read(buf, len, mode);
 
     if(ret < 1)
         return ManagedString();
 
-    return ManagedString((const char *)buf);
+    ManagedString string((const char *)buf);
+    delete[] buf;
+    return string;
 }
 
 /**
@@ -467,16 +471,18 @@ ManagedString MicroBitUARTService::readUntil(ManagedString delimeters, MicroBitS
         //calculate our local buffer size
         int localBuffSize = (preservedTail > foundIndex) ? (rxBufferSize - preservedTail) + foundIndex : foundIndex - preservedTail;
 
-        uint8_t localBuff[localBuffSize + 1];
+        uint8_t *localBuff = new uint8_t[localBuffSize + 1];
 
-        memclr(&localBuff, localBuffSize + 1);
+        memclr(localBuff, localBuffSize + 1);
 
         circularCopy(rxBuffer, rxBufferSize, localBuff, preservedTail, foundIndex);
 
         //plus one for the character we listened for...
         rxBufferTail = (rxBufferTail + localBuffSize + 1) % rxBufferSize;
 
-        return ManagedString((char *)localBuff, localBuffSize);
+        ManagedString string((char *)localBuff, localBuffSize);
+        delete[] localBuff;
+        return string;
     }
 
     return ManagedString();
