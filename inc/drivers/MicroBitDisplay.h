@@ -627,13 +627,17 @@ public:
       * This also changes the tickPeriod to MICROBIT_LIGHT_SENSOR_TICK_SPEED so
       * that the display does not suffer from artifacts.
       *
+      * @param valid_only True to return -1 if full set of results not taken and to return a stale
+      *            but valid reading in the case of invalid results. False to use all results.
+      *            Defaults to microbitMatrixMap, defined in MicroBitMatrixMaps.h.
+      *
       * @return an indicative light level in the range 0 - 255.
       *
       * @note this will return 0 on the first call to this method, a light reading
       * will be available after the display has activated the light sensor for the
       * first time.
       */
-    int readLightLevel();
+    int readLightLevel(bool valid_only = false);
 
     /**
       * Destructor for MicroBitDisplay, where we deregister this instance from the array of system components.

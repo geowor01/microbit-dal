@@ -32,12 +32,17 @@ DEALINGS IN THE SOFTWARE.
 #include "EventModel.h"
 #include "MicroBitMatrixMaps.h"
 
-#define MICROBIT_LIGHT_SENSOR_CHAN_NUM      3
-#define MICROBIT_LIGHT_SENSOR_AN_SET_TIME   4000
-#define MICROBIT_LIGHT_SENSOR_TICK_PERIOD   5
+/**
+  * Event codes raised by MicroBitDisplay
+  */
+#define MICROBIT_DISPLAY_EVT_LIGHT_SENSE_READY   1
 
-#define MICROBIT_LIGHT_SENSOR_MAX_VALUE     338
-#define MICROBIT_LIGHT_SENSOR_MIN_VALUE     75
+#define MICROBIT_LIGHT_SENSOR_CHAN_NUM           3
+#define MICROBIT_LIGHT_SENSOR_AN_SET_TIME        4000
+#define MICROBIT_LIGHT_SENSOR_TICK_PERIOD        5
+
+#define MICROBIT_LIGHT_SENSOR_MAX_VALUE          338
+#define MICROBIT_LIGHT_SENSOR_MIN_VALUE          75
 
 /**
   * Class definition for MicroBitLightSensor.
@@ -49,6 +54,12 @@ class MicroBitLightSensor
 
     //contains the results from each section of the display
     int results[MICROBIT_LIGHT_SENSOR_CHAN_NUM];
+
+    // The average of the three results.
+    int average;
+
+    // The average of the three results the last time all results were valid.
+    int valid_average;
 
     //holds the current channel (also used to index the results array)
     uint8_t chan;
@@ -81,6 +92,15 @@ class MicroBitLightSensor
       */
     void analogDisable();
 
+    /**
+      * This method updates the average of the three results, as well as the valid_average
+      * if results are valid. The MICROBIT_DISPLAY_EVT_LIGHT_SENSE_READY event is sent if
+      * the valid_average is updated.
+      *
+      * @return returns a boolean representing whether or not the results are valid.
+      */
+    bool update_averages();
+
     public:
 
     /**
@@ -111,10 +131,14 @@ class MicroBitLightSensor
       *
       * Where each number represents a different section on the 5 x 5 matrix display.
       *
+      * @param valid_only True to return -1 if full set of results not taken and to return a stale
+      *            but valid reading in the case of invalid results. False to use all results.
+      *            Defaults to microbitMatrixMap, defined in MicroBitMatrixMaps.h.
+      *
       * @return returns a value in the range 0 - 255 where 0 is dark, and 255
       * is very bright
       */
-    int read();
+    int read(bool valid_only = false);
 
     /**
       * The method that is invoked by sending MICROBIT_DISPLAY_EVT_LIGHT_SENSE
