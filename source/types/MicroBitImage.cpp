@@ -789,7 +789,7 @@ ManagedString MicroBitImage::toString()
     int stringSize = getSize() * 2;
 
     //plus one for string terminator
-    char parseBuffer[stringSize + 1];
+    char *parseBuffer = new char[stringSize + 1];
 
     parseBuffer[stringSize] = '\0';
 
@@ -822,7 +822,9 @@ ManagedString MicroBitImage::toString()
         bitmapPtr++;
     }
 
-    return ManagedString(parseBuffer);
+    ManagedString string(parseBuffer);
+    delete[] parseBuffer;
+    return parseBuffer;
 }
 
 /**
@@ -854,7 +856,7 @@ MicroBitImage MicroBitImage::crop(int startx, int starty, int cropWidth, int cro
         newHeight = getHeight();
 
     //allocate our storage.
-    uint8_t cropped[newWidth * newHeight];
+    uint8_t *cropped = new uint8_t[newWidth * newHeight];
 
     //calculate the pointer to where we want to begin cropping
     uint8_t *copyPointer = getBitmap() + (getWidth() * starty) + startx;
@@ -871,7 +873,9 @@ MicroBitImage MicroBitImage::crop(int startx, int starty, int cropWidth, int cro
         pastePointer += newHeight;
     }
 
-    return MicroBitImage(newWidth, newHeight, cropped);
+    MicroBitImage image(newWidth, newHeight, cropped);
+    delete[] cropped;
+    return image;
 }
 
 /**

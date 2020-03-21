@@ -41,6 +41,11 @@ DEALINGS IN THE SOFTWARE.
 MicroBitPartialFlashingService::MicroBitPartialFlashingService(BLEDevice &_ble, EventModel &_messageBus) :
         ble(_ble), messageBus(_messageBus)
 {
+    packetCount = 0;
+    blockPacketCount = 0;
+    blockNum = 0;
+    offset   = 0;
+
     // Set up partial flashing characteristic
     uint8_t initCharacteristicValue = 0x00;
     GattCharacteristic partialFlashCharacteristic(MicroBitPartialFlashingServiceCharacteristicUUID, &initCharacteristicValue, sizeof(initCharacteristicValue),

@@ -322,7 +322,7 @@ class MicroBitBLEManager : MicroBitComponent
      * Default to Application Mode
      * This variable will be set to MICROBIT_MODE_PAIRING if pairingMode() is executed.
      */
-    uint8_t currentMode = MICROBIT_MODE_APPLICATION;
+    uint8_t currentMode;
 
 };
 
