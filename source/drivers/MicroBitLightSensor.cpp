@@ -51,6 +51,8 @@ void MicroBitLightSensor::analogReady()
     chan++;
 
     chan = chan % MICROBIT_LIGHT_SENSOR_CHAN_NUM;
+
+    update_averages();
 }
 
 /**
@@ -87,13 +89,41 @@ MicroBitLightSensor::MicroBitLightSensor(const MatrixMap &map) :
 {
     this->chan = 0;
 
+    valid_average = -1;
+
     for(int i = 0; i < MICROBIT_LIGHT_SENSOR_CHAN_NUM; i++)
-        results[i] = 0;
+        results[i] = -1;
 
     if (EventModel::defaultEventBus)
         EventModel::defaultEventBus->listen(MICROBIT_ID_DISPLAY, MICROBIT_DISPLAY_EVT_LIGHT_SENSE, this, &MicroBitLightSensor::startSensing, MESSAGE_BUS_LISTENER_IMMEDIATE);
 
     this->sensePin = NULL;
+}
+
+/**
+  * This method updates the average of the three results, as well as the valid_average
+  * if results are valid. The MICROBIT_DISPLAY_EVT_LIGHT_SENSE_READY event is sent if
+  * the valid_average is updated.
+  *
+  * @return returns a boolean representing whether or not the results are valid.
+  */
+bool MicroBitLightSensor::update_averages()
+{
+    bool valid = true;
+    int sum = 0;
+    for(int i = 0; i < MICROBIT_LIGHT_SENSOR_CHAN_NUM; i++) {
+        if (this->results[i] < 0 || this->results[i] > 450) {
+            valid = false;
+        }
+        // Use zero if a result hasn't been used rather than -1.
+        sum += max(this->results[i], 0);
+    }
+    this->average = sum / MICROBIT_LIGHT_SENSOR_CHAN_NUM;
+    if (valid) {
+        this->valid_average = this->average;
+        MicroBitEvent(MICROBIT_ID_LIGHT_SENSOR, MICROBIT_DISPLAY_EVT_LIGHT_SENSE_READY);
+    }
+    return valid;
 }
 
 /**
@@ -114,17 +144,19 @@ MicroBitLightSensor::MicroBitLightSensor(const MatrixMap &map) :
   *
   * Where each number represents a different section on the 5 x 5 matrix display.
   *
+  * @param valid_only True to return -1 if full set of results not taken and to return a stale
+  *            but valid reading in the case of invalid results. False to use all results.
+  *            Defaults to microbitMatrixMap, defined in MicroBitMatrixMaps.h.
+  *
   * @return returns a value in the range 0 - 255 where 0 is dark, and 255
   * is very bright
   */
-int MicroBitLightSensor::read()
+int MicroBitLightSensor::read(bool valid_only)
 {
-    int sum = 0;
+    int average = valid_only ? this->valid_average : this->average;
 
-    for(int i = 0; i < MICROBIT_LIGHT_SENSOR_CHAN_NUM; i++)
-        sum += results[i];
-
-    int average = sum / MICROBIT_LIGHT_SENSOR_CHAN_NUM;
+    if (valid_only && average < 0)
+        return -1;
 
     average = min(average, MICROBIT_LIGHT_SENSOR_MAX_VALUE);
 
