@@ -72,7 +72,7 @@ MicroBitAccelerometer::MicroBitAccelerometer(CoordinateSpace &cspace, uint16_t i
  * Device autodetection. Scans the given I2C bus for supported accelerometer devices.
  * if found, constructs an appropriate driver and returns it.
  *
- * @param i2c the bus to scan. 
+ * @param i2c the bus to scan.
  * @param id the unique EventModel id of this component. Defaults to: MICROBIT_ID_ACCELEROMETER
  *
  */

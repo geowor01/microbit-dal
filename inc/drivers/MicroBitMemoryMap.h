@@ -70,7 +70,7 @@ class MicroBitMemoryMap
         Region memoryMap[NUMBER_OF_REGIONS];
     };
 
-    uint8_t regionCount = 0;
+    uint8_t regionCount;
 
     public:
 

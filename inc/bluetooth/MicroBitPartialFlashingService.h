@@ -97,13 +97,13 @@ class MicroBitPartialFlashingService
     void flashData(uint8_t *data);
 
     // Ensure packets are in order
-    uint8_t packetCount = 0;
-    uint8_t blockPacketCount = 0;
+    uint8_t packetCount;
+    uint8_t blockPacketCount;
 
     // Keep track of blocks of data
     uint32_t block[16];
-    uint8_t  blockNum = 0;
-    uint32_t offset   = 0;
+    uint8_t  blockNum;
+    uint32_t offset;
 
 };
 
